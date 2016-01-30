@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Demo for jQuery accordion live filter</title>
+    <style>
+        body {
+            width: 300px;
+            margin: 5% auto;
+        }
+        .filter {
+            margin-bottom: 0.4rem;
+        }
+
+        ul {
+            margin:0;
+            padding: 0;
+            list-style: none;
+        }
+        ul > li {
+            font-weight: bold;
+            cursor: pointer;
+        }
+        li li {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <input class="filter" data-alf="#menu" placeholder="Filter colors">
+    </div>
+    <div>
+        <ul id="menu">
+            <li>
+                Blue
+                <ul>
+                    <li><a href="#">Primary</a></li>
+                    <li><a href="#">Navy</a></li>
+                    <li><a href="#">Baby</a></li>
+                    <li><a href="#">Steel</a></li>
+                    <li><a href="#">Ocean</a></li>
+                </ul>
+            </li>
+            <li>
+                Red
+                <ul>
+                    <li>Primary</li>
+                    <li>Crimson</li>
+                    <li>Cherry</li>
+                    <li>Ruby</li>
+                </ul>
+            </li>
+            <li>
+                Green
+                <ul>
+                    <li>Primary</li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+    <script src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
+    <script>
+        $('.filter').accordionLiveFilter();
+    </script>
+</body>
+</html>
