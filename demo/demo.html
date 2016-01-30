@@ -12,17 +12,30 @@
             margin-bottom: 0.4rem;
         }
 
-        ul {
+        .filterable {
             margin:0;
             padding: 0;
             list-style: none;
         }
-        ul > li {
+        .filterable li {
+            list-style: none;
+        }
+        .filterable label {
             font-weight: bold;
             cursor: pointer;
         }
-        li li {
+        .filterable label:before {
+            content: "▸";
+            padding-right: 5px;
+        }
+        .filterable .expanded:before {
+            content: "▾"
+        }
+
+        .filterable ul {
             display: none;
+            margin: 0 0 0 20px;
+            padding: 0;
         }
     </style>
 </head>
@@ -31,9 +44,9 @@
         <input class="filter" data-alf="#menu" placeholder="Filter colors">
     </div>
     <div>
-        <ul id="menu">
+        <ul id="menu" class="filterable">
             <li>
-                Blue
+                <label>Blue</label>
                 <ul>
                     <li><a href="#">Primary</a></li>
                     <li><a href="#">Navy</a></li>
@@ -43,7 +56,7 @@
                 </ul>
             </li>
             <li>
-                Red
+                <label>Red</label>
                 <ul>
                     <li>Primary</li>
                     <li>Crimson</li>
@@ -52,7 +65,7 @@
                 </ul>
             </li>
             <li>
-                Green
+                <label>Green</label>
                 <ul>
                     <li>Primary</li>
                 </ul>
@@ -60,6 +73,7 @@
         </ul>
     </div>
     <script src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
+    <script src="../jquery.accordion-live-filter.js"></script>
     <script>
         $('.filter').accordionLiveFilter();
     </script>
