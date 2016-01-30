@@ -23,22 +23,30 @@
                 throw new Error('The selector ' + selector + ' was not found.');
             }
 
-            $('label', $accordion).on('expand', function() {
-                var $label = $(this);
-                $label.addClass('expanded');
-                $label.next('ul').slideDown();
-            }).on('contract', function() {
-                var $label = $(this);
-                $label.removeClass('expanded');
-                $label.next('ul').slideUp();
+            var $delete = $('<a href="#" class="alf-delete">&times;</a>');
+            $delete.on('click', function(e) {
+                e.preventDefault();
+                $filterField.val('');
+                $('label', $accordion).trigger('contract.alf');
+                $('li', $accordion).removeClass('potential');
+            });
+            $filterField.after($delete);
+
+
+            $('label', $accordion).each(function(i, label) {
+                var $label = $(label);
+                var $ul = $label.next('ul');
+                $label.data('alf-child', $ul);
+                $ul.data('alf-parent', $label);
+            });
+
+            $('label', $accordion).on('expand.alf', function() {
+                $(this).addClass('expanded').data('alf-child').slideDown();
+            }).on('contract.alf', function() {
+                $(this).removeClass('expanded').data('alf-child').slideUp();
             }).on('click', function() {
                 var $label = $(this);
-                if ($label.hasClass('expanded')) {
-                    $label.trigger('contract');
-                }
-                else {
-                    $label.trigger('expand');
-                }
+                $label.hasClass('expanded') ? $label.trigger('contract.alf') : $label.trigger('expand.alf');
             });
 
             $filterField.on('keyup', function() {
@@ -58,11 +66,11 @@
                                     $e.addClass('potential');
                                 }
                             });
-                            $ul.prev('label').trigger('expand');
+                            $ul.data('alf-parent').trigger('expand.alf');
                             return true;
                         }
                     }
-                    $ul.prev('label').trigger('contract');
+                    $ul.data('alf-parent').trigger('contract.alf');
                 });
             });
         });
