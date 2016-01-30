@@ -10,24 +10,37 @@
      */
     $.fn.accordionLiveFilter = function() {
 
-        /**
-         * Adds the handler to the accordion element
-         * @param $element
-         */
-        function addAccordionHandler($element)
-        {
-            $('label', $element).on('click', function() {
-                if ($(this).hasClass('expanded')) {
-                    hideCategory($(this).next());
+        return this.each(function() {
+            var $filterField = $(this);
+
+            var selector = $filterField.data('alf');
+            if (!selector) {
+                throw new Error('The accordion search filter element needs a data-alf element with a jquery selector.');
+            }
+
+            var $accordion = $(selector);
+            if ($accordion.length == 0) {
+                throw new Error('The selector ' + selector + ' was not found.');
+            }
+
+            $('label', $accordion).on('expand', function() {
+                var $label = $(this);
+                $label.addClass('expanded');
+                $label.next('ul').slideDown();
+            }).on('contract', function() {
+                var $label = $(this);
+                $label.removeClass('expanded');
+                $label.next('ul').slideUp();
+            }).on('click', function() {
+                var $label = $(this);
+                if ($label.hasClass('expanded')) {
+                    $label.trigger('contract');
                 }
                 else {
-                    showCategory($(this).next());
+                    $label.trigger('expand');
                 }
             });
-        }
 
-        function addFilterHandler($filterField, $accordion)
-        {
             $filterField.on('keyup', function() {
                 var query = $filterField.val().toLowerCase();
                 $('li > ul', $accordion).each(function(index, element) {
@@ -45,40 +58,13 @@
                                     $e.addClass('potential');
                                 }
                             });
-                            showCategory($ul);
+                            $ul.prev('label').trigger('expand');
                             return true;
                         }
                     }
-                    hideCategory($ul);
+                    $ul.prev('label').trigger('contract');
                 });
             });
-        }
-
-        function showCategory($ul)
-        {
-            $ul.slideDown().prev().addClass('expanded');
-        }
-
-        function hideCategory($ul)
-        {
-            $ul.slideUp().prev().removeClass('expanded');
-        }
-
-        return this.each(function() {
-            var $filterField = $(this);
-
-            var selector = $filterField.data('alf');
-            if (!selector) {
-                throw new Error('The accordion search filter element needs a data-alf element with a jquery selector.');
-            }
-
-            var $accordion = $(selector);
-            if ($accordion.length == 0) {
-                throw new Error('The selector ' + selector + ' was not found.');
-            }
-
-            addAccordionHandler($accordion);
-            addFilterHandler($filterField, $accordion);
         });
     };
 }(jQuery));
