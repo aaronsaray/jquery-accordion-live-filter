@@ -29,13 +29,25 @@
             $filterField.on('keyup', function() {
                 var query = $filterField.val().toLowerCase();
                 $('li > ul', $accordion).each(function(index, element) {
-                    var ul = $(element);
-                    if (query && ul.text().toLowerCase().indexOf(query) >= 0) {
-                        ul.show();
+                    var $ul = $(element);
+                    if (query) {
+                        var ulText = $ul.text();
+                        var idx = ulText.toLowerCase().indexOf(query);
+                        if (idx >= 0) {
+                            $ul.children().each(function(i, e) {
+                                var eText = $(e).text();
+                                if (eText.toLowerCase().indexOf(query) >= 0) {
+                                    $(e).css('fontWeight', 'bold');
+                                }
+                                else {
+                                    $(e).css('fontWeight', 'normal');
+                                }
+                            });
+                            $ul.show();
+                            return true;
+                        }
                     }
-                    else {
-                        ul.hide();
-                    }
+                    $ul.hide();
                 });
             });
         }
