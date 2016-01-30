@@ -16,12 +16,14 @@
          */
         function addAccordionHandler($element)
         {
-            $('label', $element).on('click', expand);
-        }
-
-        function expand()
-        {
-            $(this).toggleClass('expanded').next().slideToggle();
+            $('label', $element).on('click', function() {
+                if ($(this).hasClass('expanded')) {
+                    hideCategory($(this).next());
+                }
+                else {
+                    showCategory($(this).next());
+                }
+            });
         }
 
         function addFilterHandler($filterField, $accordion)
@@ -30,26 +32,36 @@
                 var query = $filterField.val().toLowerCase();
                 $('li > ul', $accordion).each(function(index, element) {
                     var $ul = $(element);
+                    var $ulChildren = $ul.children();
+                    $ulChildren.removeClass('potential');
+
                     if (query) {
                         var ulText = $ul.text();
                         var idx = ulText.toLowerCase().indexOf(query);
                         if (idx >= 0) {
-                            $ul.children().each(function(i, e) {
-                                var eText = $(e).text();
-                                if (eText.toLowerCase().indexOf(query) >= 0) {
-                                    $(e).css('fontWeight', 'bold');
-                                }
-                                else {
-                                    $(e).css('fontWeight', 'normal');
+                            $ulChildren.each(function(i, e) {
+                                var $e = $(e);
+                                if ($e.text().toLowerCase().indexOf(query) >= 0) {
+                                    $e.addClass('potential');
                                 }
                             });
-                            $ul.show();
+                            showCategory($ul);
                             return true;
                         }
                     }
-                    $ul.hide();
+                    hideCategory($ul);
                 });
             });
+        }
+
+        function showCategory($ul)
+        {
+            $ul.slideDown().prev().addClass('expanded');
+        }
+
+        function hideCategory($ul)
+        {
+            $ul.slideUp().prev().removeClass('expanded');
         }
 
         return this.each(function() {
