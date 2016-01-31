@@ -17,7 +17,8 @@
         this.settings = $.extend({
             dataAccordionReference: 'alf',
             clearFilterClass: 'alf-filter-clear',
-            matchedClass: 'alf-matched'
+            matchedClass: 'alf-matched',
+            expandedClass: 'alf-expanded'
         }, options);
 
         this.$filterElement = $(element);
@@ -65,20 +66,22 @@
      * Add handler for the accordion and the relationship between the filter and the accordion
      */
     AccordionLiveFilter.prototype.addAccordionRelationshipsAndHandlers = function() {
+        var self = this;
+
         $('label', this.$accordion).each(function(i, label) {
             var $label = $(label);
             var $ul = $label.next('ul');
 
             /** here, add the handlers for the label **/
             $label.on('expand.alf', function() {
-                $(this).addClass('expanded');
+                $(this).addClass(self.settings.expandedClass);
                 $ul.slideDown();
             }).on('contract.alf', function() {
-                $(this).removeClass('expanded');
+                $(this).removeClass(self.settings.expandedClass);
                 $ul.slideUp();
             }).on('click', function() {
                 var $label = $(this);
-                $label.hasClass('expanded') ? $label.trigger('contract.alf') : $label.trigger('expand.alf');
+                $label.hasClass(self.settings.expandedClass) ? $label.trigger('contract.alf') : $label.trigger('expand.alf');
             });
 
             /** now, cache the relationships so we don't always have to traverse **/

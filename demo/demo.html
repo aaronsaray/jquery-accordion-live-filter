@@ -8,61 +8,15 @@
             width: 300px;
             margin: 5% auto;
         }
-        .filter {
-            margin-bottom: 0.4rem;
-            padding-right: 15px;
-        }
-        .alf-filter-clear {
-            text-decoration: none;
-            color: #ffffff;
-            background: #cccccc;
-            border-radius: 50%;
-            display: inline-block;
-            font-size: 75%;
-            line-height: 0.95;
-            padding: 0 2px;
-            position: absolute;
-            margin: 4px 0 0 -14px;
-            opacity: 0.5;
-        }
-        .alf-filter-clear:hover {
-            opacity: 1;
-        }
-        .filterable {
-            margin:0;
-            padding: 0;
-            list-style: none;
-        }
-        .filterable .alf-matched {
-            font-weight: bold;
-        }
-        .filterable li {
-            list-style: none;
-        }
-        .filterable label {
-            font-weight: bold;
-            cursor: pointer;
-        }
-        .filterable label:before {
-            content: "▸";
-            padding-right: 5px;
-        }
-        .filterable .expanded:before {
-            content: "▾"
-        }
-        .filterable ul {
-            display: none;
-            margin: 0 0 0 20px;
-            padding: 0;
-        }
     </style>
+    <link rel="stylesheet" href="../src/accordion-live-filter.css">
 </head>
 <body>
     <div>
-        <input class="filter" data-alf="#menu" placeholder="Filter colors">
+        <input class="alf-filter" data-alf="#alf-menu" placeholder="Filter colors">
     </div>
     <div>
-        <ul id="menu" class="filterable">
+        <ul id="alf-menu" class="alf-filterable">
             <li>
                 <label>Blue</label>
                 <ul>
@@ -93,7 +47,7 @@
     <script src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
     <script src="../src/jquery.accordion-live-filter.js"></script>
     <script>
-        $('.filter').accordionLiveFilter();
+        $('.alf-filter').accordionLiveFilter();
     </script>
 </body>
 </html>

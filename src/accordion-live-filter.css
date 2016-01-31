@@ -1,0 +1,75 @@
+/**
+ * Accordion Live Filter CSS
+ *
+ * @author Aaron Saray
+ *
+ * These are the styles used in the demo - as well as the values that are included by default.
+ *
+ * If you change any of the default values with the options on the jQuery plugin, you may need to alter CSS to match your changes
+ */
+
+/**
+ * the main filter input
+ */
+.alf-filter {
+    margin-bottom: 0.4rem;
+    padding-right: 15px;
+    font-size: 11px;
+}
+
+/**
+ * style for the delete/clear button
+ */
+.alf-filter-clear {
+    text-decoration: none;
+    color: #ffffff;
+    background: #aaaaaa;
+    border-radius: 50%;
+    display: inline-block;
+    font-size: 12px;
+    line-height: 0.95;
+    padding: 0 2px;
+    position: absolute;
+    margin: 4px 0 0 -14px;
+    opacity: 0.5;
+    transition-duration: 0.5s;
+    transition-property: opacity;
+}
+.alf-filter-clear:hover {
+    opacity: 1;
+}
+
+/**
+ * styles for the accordion
+ */
+.alf-filterable {
+    margin:0;
+    padding: 0;
+}
+.alf-filterable li {
+    list-style: none;
+}
+.alf-filterable ul {
+    display: none;
+    margin: 0 0 0 20px;
+    padding: 0;
+}
+/** labels for the categories **/
+.alf-filterable label {
+    font-weight: bold;
+    cursor: pointer;
+}
+.alf-filterable label:before {
+    content: "▸";
+    padding-right: 5px;
+    display: inline-block;
+    transition-duration: 0.5s;
+    transition-property: transform;
+}
+.alf-filterable .alf-expanded:before {
+    transform: rotate(90deg);
+}
+/** what to do when there is a potential matched element **/
+.alf-filterable .alf-matched {
+    font-weight: bold;
+}
