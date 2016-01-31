@@ -3,77 +3,136 @@
  * @author Aaron Saray
  */
 ;(function($) {
+    "use strict";
 
     /**
-     * Accordion Filter plugin
-     * @returns {*}
+     * Accordion Live Filter Class
+     *
+     * @param element The filter field
+     * @param options {*} Options object
+     * @constructor
      */
-    $.fn.accordionLiveFilter = function() {
+    var AccordionLiveFilter = function(element, options) {
 
-        return this.each(function() {
-            var $filterField = $(this);
+        this.settings = $.extend({
+            dataAccordionReference: 'alf',
+            clearFilterClass: 'alf-filter-clear',
+            matchedClass: 'alf-matched'
+        }, options);
 
-            var selector = $filterField.data('alf');
-            if (!selector) {
-                throw new Error('The accordion search filter element needs a data-alf element with a jquery selector.');
-            }
+        this.$filterElement = $(element);
+        this.$accordion = this.getAccordion();
 
-            var $accordion = $(selector);
-            if ($accordion.length == 0) {
-                throw new Error('The selector ' + selector + ' was not found.');
-            }
+        this.addAccordionRelationshipsAndHandlers();
+        this.addFilterHandler();
+        this.addFilterClear();
+    };
 
-            var $delete = $('<a href="#" class="alf-delete">&times;</a>');
-            $delete.on('click', function(e) {
-                e.preventDefault();
-                $filterField.val('');
-                $('label', $accordion).trigger('contract.alf');
-                $('li', $accordion).removeClass('potential');
-            });
-            $filterField.after($delete);
+    /**
+     * Gets the associated accordion to the filter field
+     *
+     * This will throw an error if its not found
+     * @returns {*|HTMLElement}
+     */
+    AccordionLiveFilter.prototype.getAccordion = function() {
+        var selector = this.$filterElement.data(this.settings.dataAccordionReference);
+        if (!selector) {
+            throw new Error('The accordion search filter element needs a data-' + this.settings.dataAccordionReference + ' element with a jquery selector.');
+        }
 
+        var $accordion = $(selector);
+        if ($accordion.length == 0) {
+            throw new Error('The selector ' + selector + ' was not found.');
+        }
+        return $accordion;
+    };
 
-            $('label', $accordion).each(function(i, label) {
-                var $label = $(label);
-                var $ul = $label.next('ul');
-                $label.data('alf-child', $ul);
-                $ul.data('alf-parent', $label);
-            });
+    /**
+     * Add the delete button to the item
+     */
+    AccordionLiveFilter.prototype.addFilterClear = function() {
+        var $delete = $('<a href="#">&times;</a>').addClass(this.settings.clearFilterClass);
+        $delete.on('click', function(e) {
+            e.preventDefault();
+            this.$filterElement.val('');
+            $('label', this.$accordion).trigger('contract.alf');
+            $('li', this.$accordion).removeClass('potential');
+        }.bind(this));
+        this.$filterElement.after($delete);
+    };
 
-            $('label', $accordion).on('expand.alf', function() {
-                $(this).addClass('expanded').data('alf-child').slideDown();
+    /**
+     * Add handler for the accordion and the relationship between the filter and the accordion
+     */
+    AccordionLiveFilter.prototype.addAccordionRelationshipsAndHandlers = function() {
+        $('label', this.$accordion).each(function(i, label) {
+            var $label = $(label);
+            var $ul = $label.next('ul');
+
+            /** here, add the handlers for the label **/
+            $label.on('expand.alf', function() {
+                $(this).addClass('expanded');
+                $ul.slideDown();
             }).on('contract.alf', function() {
-                $(this).removeClass('expanded').data('alf-child').slideUp();
+                $(this).removeClass('expanded');
+                $ul.slideUp();
             }).on('click', function() {
                 var $label = $(this);
                 $label.hasClass('expanded') ? $label.trigger('contract.alf') : $label.trigger('expand.alf');
             });
 
-            $filterField.on('keyup', function() {
-                var query = $filterField.val().toLowerCase();
-                $('li > ul', $accordion).each(function(index, element) {
-                    var $ul = $(element);
-                    var $ulChildren = $ul.children();
-                    $ulChildren.removeClass('potential');
-
-                    if (query) {
-                        var ulText = $ul.text();
-                        var idx = ulText.toLowerCase().indexOf(query);
-                        if (idx >= 0) {
-                            $ulChildren.each(function(i, e) {
-                                var $e = $(e);
-                                if ($e.text().toLowerCase().indexOf(query) >= 0) {
-                                    $e.addClass('potential');
-                                }
-                            });
-                            $ul.data('alf-parent').trigger('expand.alf');
-                            return true;
-                        }
-                    }
-                    $ul.data('alf-parent').trigger('contract.alf');
-                });
-            });
+            /** now, cache the relationships so we don't always have to traverse **/
+            $label.data('alf-child', $ul);
+            $ul.data('alf-parent', $label);
         });
     };
+
+    /**
+     * Add the filter handler
+     */
+    AccordionLiveFilter.prototype.addFilterHandler = function() {
+        var self = this;
+
+        this.$filterElement.on('keyup change', function() {
+
+            var query = this.value.toLowerCase();
+
+            $('li > ul', self.$accordion).each(function(i, ul) {
+                var $ul = $(ul),
+                    $ulParent = $ul.data('alf-parent'),
+                    $ulChildren = $ul.children(),
+                    trigger = 'contract.alf';
+
+                $ulChildren.removeClass(self.settings.matchedClass);
+                if (query) {
+                    if ($ul.text().toLowerCase().indexOf(query) >= 0) {
+                        $ulChildren.each(function(i, li) {
+                            var $li = $(li);
+                            if ($li.text().toLowerCase().indexOf(query) >= 0) {
+                                $li.addClass(self.settings.matchedClass);
+                            }
+                        });
+                        trigger = 'expand.alf';
+                    }
+                }
+                $ulParent.trigger(trigger);
+            });
+        });
+
+    };
+
+    /**
+     * Plugin Proxy for jQuery
+     * @param options
+     * @returns {*}
+     * @constructor
+     */
+    function Plugin(options) {
+        return this.each(function() {
+            new AccordionLiveFilter(this, options);
+        });
+    }
+
+    $.fn.accordionLiveFilter = Plugin;
 }(jQuery));
 
