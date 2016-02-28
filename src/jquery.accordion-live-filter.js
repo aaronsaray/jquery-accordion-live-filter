@@ -1,4 +1,4 @@
-/**
+/*!
  * jQuery Accordion Live Filter
  * @author Aaron Saray
  */
